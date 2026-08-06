@@ -67,8 +67,8 @@ def do_refresh():
     pyautogui.click(x6, y6) 
     time.sleep(0.5)
     pyautogui.press('f5')
-    print("⏳ Waiting 5 seconds for bot to reload...")
-    time.sleep(5)
+    print("⏳ Waiting 10 seconds for bot to reload...") # زمان مکث به 10 ثانیه افزایش یافت
+    time.sleep(10) # زمان مکث به 10 ثانیه افزایش یافت
 
 def wait_for_chat_box():
     """صبر میکنه تا گروه باز بشه با بررسی گیره چت"""
@@ -91,7 +91,7 @@ def send_emoji(emoji_symbol):
     time.sleep(1)
     
     pyautogui.hotkey('ctrl', 'v')
-    time.sleep(0.2)  # <--- تغییر زمان مکث از 1 ثانیه به 0.2 ثانیه قبل از ارسال
+    time.sleep(0.2)  # زمان مکث قبل از ارسال 0.2 ثانیه
     
     pyautogui.press('enter')
     print(f"Sent successfully: {emoji_symbol}")
@@ -192,7 +192,6 @@ def main():
             while True:
                 send_emoji("🎰")
                 
-                # <--- تغییر زمان مکث انیمیشن اسلات از 5 به 7 ثانیه --->
                 print("⏳ Waiting 7 seconds for slot animation...")
                 time.sleep(7)
                 
