@@ -91,7 +91,7 @@ def send_emoji(emoji_symbol):
     time.sleep(1)
     
     pyautogui.hotkey('ctrl', 'v')
-    time.sleep(1)
+    time.sleep(0.2)  # <--- تغییر زمان مکث از 1 ثانیه به 0.2 ثانیه قبل از ارسال
     
     pyautogui.press('enter')
     print(f"Sent successfully: {emoji_symbol}")
@@ -146,6 +146,8 @@ def main():
     print("-" * 50)
     
     while True:
+        skip_slot = False  # متغیری برای بررسی اینکه آیا نیازی هست فاز ۲ رو اجرا کنیم یا نه
+        
         # ---------------------------------------------------------
         # فاز اول: تاس انداختن تا زمانی که ۶ بدهد
         # ---------------------------------------------------------
@@ -162,9 +164,16 @@ def main():
             
             if is_number_6_lit():
                 print("✅ Number 6 is LIT!")
-                print("⏳ Waiting 60 seconds before moving to SLOT...")
-                time.sleep(60) 
-                break # رفتن به فاز دوم
+                
+                # <--- بررسی همزمان عدد 7 بعد از روشن شدن 6 --->
+                if is_number_7_lit():
+                    print("🎉 Number 7 is ALSO LIT! Skipping SLOT phase...")
+                    skip_slot = True
+                    break # مستقیماً به فاز سوم (دریافت جایزه) می‌رود
+                else:
+                    print("⏳ Waiting 60 seconds before moving to SLOT...")
+                    time.sleep(60) 
+                    break # به فاز دوم (اسلات) می‌رود
             else:
                 if not is_chat_open():
                     print("❌ Group is Locked! Skipping scan.")
@@ -176,27 +185,29 @@ def main():
         # ---------------------------------------------------------
         # فاز دوم: اسلات انداختن تا زمانی که ۷ بدهد
         # ---------------------------------------------------------
-        print("\n" + "="*45)
-        print("🎰 PHASE 2: Spinning SLOT")
-        print("="*45)
-        while True:
-            send_emoji("🎰")
-            
-            print("⏳ Waiting 5 seconds for slot animation...")
-            time.sleep(5)
-            
-            do_refresh()
-            
-            if is_number_7_lit():
-                print("✅ Number 7 is LIT!")
-                break # رفتن به فاز سوم (جایزه)
-            else:
-                if not is_chat_open():
-                    print("❌ Group is Locked! Skipping scan.")
+        if not skip_slot:  # اگر 7 در مرحله قبل روشن نشده بود، این فاز اجرا می‌شود
+            print("\n" + "="*45)
+            print("🎰 PHASE 2: Spinning SLOT")
+            print("="*45)
+            while True:
+                send_emoji("🎰")
+                
+                # <--- تغییر زمان مکث انیمیشن اسلات از 5 به 7 ثانیه --->
+                print("⏳ Waiting 7 seconds for slot animation...")
+                time.sleep(7)
+                
+                do_refresh()
+                
+                if is_number_7_lit():
+                    print("✅ Number 7 is LIT!")
+                    break # رفتن به فاز سوم (جایزه)
                 else:
-                    print("❌ Number 7 is NOT lit.")
-                print("⏳ Waiting 60 seconds before trying SLOT again...")
-                time.sleep(60)
+                    if not is_chat_open():
+                        print("❌ Group is Locked! Skipping scan.")
+                    else:
+                        print("❌ Number 7 is NOT lit.")
+                    print("⏳ Waiting 60 seconds before trying SLOT again...")
+                    time.sleep(60)
 
         # ---------------------------------------------------------
         # فاز سوم: دابل کلیک روی ۷ و صبر ۶۰ ثانیه‌ای
